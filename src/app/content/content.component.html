@@ -1,5 +1,4 @@
 <div>
-  <p>This is seen by all.</p>
-  <p>This is seen by clients only.</p>
-  <p>This is seen by admins only.</p>
+  <p>Logged in: {{ shared.isLogged$ | async }}</p>
+  <p *ngIf="(shared.isLogged$ | async)">Logged in as {{ (shared.isAdmin$ | async) ? "Admin" : "Client" }}</p>
 </div>

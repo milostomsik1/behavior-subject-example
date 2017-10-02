@@ -1,3 +1,4 @@
+import { SharedService } from './services/shared.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
@@ -14,7 +15,7 @@ import { LoginComponent } from './login/login.component';
   imports: [
     BrowserModule
   ],
-  providers: [],
+  providers: [SharedService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

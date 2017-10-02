@@ -1,28 +1,66 @@
-# BehaviorSubjectExample
+# Behavior Subject Example
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.4.1.
+Shared Service
+```javascript
+export class SharedService {
+  // --- sets up variable as behavior subject of given type (bool in this case) and gives it initial value
+  // --- initial value is mandatory, compared to 'Subject' type
+  // --- when the value is passed to behavior subject with .next() it broadcasts the new value all subscribers
+  // --- BehaviorSubject can be regarded as broadcast variable
+  isLogged$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  isAdmin$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+}
+```
 
-## Development server
+Login Component HTML
+```HTML
+<div>
+  <!-- Pushes data to BehaviorSubject via method -->
+  <a (click)="loginClient()">Login as Client</a>
+  <a (click)="loginAdmin()">Login as Admin</a>
+  <a (click)="logout()">Logout</a>
+</div>
+```
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Login Component
+```javascript
+export class LoginComponent {
+  // --- registers shared service to gain access to behavior subject variables
+  constructor(private shared: SharedService) { }
 
-## Code scaffolding
+  // --- sends data to shared service and updates the behavior subject
+  loginClient(): void {
+    this.shared.isLogged$.next(true);
+    this.shared.isAdmin$.next(false);
+  }
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+  // --- sends data to shared service and updates the behavior subject
+  loginAdmin(): void {
+    this.shared.isLogged$.next(true);
+    this.shared.isAdmin$.next(true);
+  }
 
-## Build
+  // --- sends data to shared service and updates the behavior subject
+  logout(): void {
+    this.shared.isLogged$.next(false);
+    this.shared.isAdmin$.next(false);
+  }
+}
+```
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
+Content HTML
+```HTML
+<div>
+  <!-- Using async pipe subscribes to changes in behavior subject variables -->
+  <p>Logged in: {{ shared.isLogged$ | async }}</p>
+  <p *ngIf="(shared.isLogged$ | async)">Logged in as {{ (shared.isAdmin$ | async) ? "Admin" : "Client" }}</p>
+</div>
+```
 
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-Before running the tests make sure you are serving the app via `ng serve`.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+Content Component
+```javascript
+export class ContentComponent {
+  // --- registers shared service to gain access to behavior subject variables
+  constructor(private shared: SharedService) {}
+}
+```
